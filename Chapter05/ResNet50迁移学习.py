@@ -94,7 +94,7 @@ for i in range(2):
     data_image = std * data_image + mean
     data_image = np.clip(data_image, 0, 1)
     # 显示图像
-    plt.subplot(2, 2, i+1)
+    plt.subplot(1, 2, i+1)
     plt.imshow(data_image)
     plt.title(class_name[int(labels[i].asnumpy())])
     plt.axis("off")

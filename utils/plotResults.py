@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as np, cv2, sys
 import matplotlib.pyplot as plt
 
 def displayImages(images, label):
@@ -21,16 +21,16 @@ def showLossAndAccuracy(train_losses, train_accuracies, val_losses, val_accuraci
 
     plt.figure(figsize=(10, 12))
     plt.subplot(211)
-    plt.plot(epochs, train_losses, 'bo', label='Training loss')
+    plt.plot(epochs, train_losses, 'b', label='Training loss')
     plt.plot(epochs, val_losses, 'r', label='Validation loss')
     plt.title('Training and validation loss with ' + tlt)
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend()
-    plt.grid('off')
+    plt.grid(False)
 
     plt.subplot(212)
-    plt.plot(epochs, train_accuracies, 'bo', label='Training accuracy')
+    plt.plot(epochs, train_accuracies, 'b', label='Training accuracy')
     plt.plot(epochs, val_accuracies, 'r', label='Validation accuracy')
     plt.title('Training and validation accuracy with ' + tlt)
     plt.xlabel('Epochs')
@@ -39,7 +39,7 @@ def showLossAndAccuracy(train_losses, train_accuracies, val_losses, val_accuraci
     plt.gca().set_yticks(yl)
     plt.gca().set_yticklabels(['{:.0f}%'.format(x*100) for x in yl])
     plt.legend()
-    plt.grid('off')
+    plt.grid(False)
     plt.show()
 
 
@@ -79,5 +79,29 @@ def showWeightDistribution(model):
             plt.subplot(2, 2, ix + 1)
             plt.hist(par.asnumpy().flatten())
             plt.title('Biases of output layer')
+    plt.show()
+
+
+def displayBboxImage(im, bbs, clss):
+    fontFace = cv2.FONT_HERSHEY_SIMPLEX
+    fontScale = 0.3
+    thinkness = 1
+    # itereate over all the bbox region
+    for i, rect in enumerate(bbs):
+        # draw rectangle for region proposal till numShowRects
+        print(rect)
+        xmin, ymin, xmax, ymax = rect
+        cv2.rectangle(im, (xmin, ymin), (xmax, ymax), (0, 255, 0), thinkness, cv2.LINE_AA)
+
+
+        (w, h), baseline = cv2.getTextSize( clss[0], fontFace, fontScale, thinkness )
+
+        cv2.rectangle(im, (xmin, ymin - h - baseline - thinkness),(xmin + w, ymin), (0, 0, 255), -1)
+        cv2.putText(im, clss[0], (xmin, ymin - baseline),
+               fontFace, fontScale, (255, 255, 255), thinkness, cv2.LINE_AA)
+
+    plt.figure(figsize=(8, 5))
+    plt.imshow(im)
+    plt.title('Object detected')
     plt.show()
 
